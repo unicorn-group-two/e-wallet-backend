@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public BVNValidationPaystackResponse bvnValidation(BvnValidationRequest bvnValidationRequest) throws IOException {
+    public String bvnValidation(BvnValidationRequest bvnValidationRequest) throws IOException {
 
             OkHttpClient client = new OkHttpClient();
             MediaType mediaType = MediaType.parse("application/json");
@@ -161,8 +161,10 @@ public class UserServiceImpl implements UserService{
                 .build();
         try (ResponseBody response = client.newCall(request).execute().body()){
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            BVNValidationPaystackResponse bvnValidationPaystackResponse
+            = objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                     .readValue(response.string(), BVNValidationPaystackResponse.class);
+            return bvnValidationPaystackResponse.getData().getAccount_number();
 
         }
 
@@ -270,6 +272,7 @@ public class UserServiceImpl implements UserService{
         foundUser.getCardList().add(addedCard);
         foundUser.setKyc(addedKyc);
         foundUser.setNextOfKin(addedNextOfKin);
+        bvnValidation(updateUserInfoRequest.getBvnValidationRequest());
         userRepo.save(foundUser);
         return "user information updated successfully!";
     }

@@ -5,7 +5,6 @@ import com.africa.semicolon.ewallet.data.models.User;
 
 import com.africa.semicolon.ewallet.dtos.request.*;
 import com.africa.semicolon.ewallet.dtos.response.accountverificationpaystackresponse.AccountVerificationPaystackResponse;
-import com.africa.semicolon.ewallet.dtos.response.bvnvalidationpaystackresponse.BVNValidationPaystackResponse;
 import com.africa.semicolon.ewallet.dtos.response.getbankspaystackresponse.BankName;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -28,7 +27,7 @@ public interface UserService {
     String addCard(Long userId, AddCardRequest addCardRequest) throws ParseException, IOException;
     AccountVerificationPaystackResponse verifyReceiverAccount(AccountVerificationRequest accountVerificationRequest) throws IOException;
     List<BankName> getListOfBanks() throws IOException;
-    BVNValidationPaystackResponse bvnValidation(BvnValidationRequest bvnValidationRequest) throws IOException;
+    String bvnValidation(BvnValidationRequest bvnValidationRequest) throws IOException;
     String getBankCode(BankCodeRequest bankCodeRequest) throws IOException;
     String createTransferRecipient(CreateTransferRecipientRequest createTransferRecipientRequest) throws IOException;
     JsonNode initiateTransfer(InitiateTransferRequest initiateTransferRequest) throws IOException;

@@ -9,5 +9,5 @@ import lombok.Setter;
 public class Data {
 
     private boolean is_blacklisted;
-    private boolean account_number;
+    private String account_number;
 }
