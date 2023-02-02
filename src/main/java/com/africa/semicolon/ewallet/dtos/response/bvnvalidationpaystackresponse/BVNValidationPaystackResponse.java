@@ -8,5 +8,5 @@ import lombok.Setter;
 public class BVNValidationPaystackResponse {
 
     private Data data;
-    private String message;
+//    private String message;
 }

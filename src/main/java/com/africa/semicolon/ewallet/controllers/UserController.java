@@ -110,7 +110,7 @@ public class UserController {
 
     @PostMapping("/bvn-validation")
     public ResponseEntity<?>bvnValidation(@RequestBody BvnValidationRequest bvnValidationRequest, HttpServletRequest httpServletRequest) throws IOException {
-        String response = userService.bvnValidation(bvnValidationRequest);
+        JsonNode response = userService.bvnValidation(bvnValidationRequest);
         ApiResponse apiResponse = ApiResponse.builder()
                 .timeStamp(ZonedDateTime.now())
                 .data(response)

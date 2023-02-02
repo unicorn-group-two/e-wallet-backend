@@ -27,7 +27,7 @@ public interface UserService {
     String addCard(Long userId, AddCardRequest addCardRequest) throws ParseException, IOException;
     AccountVerificationPaystackResponse verifyReceiverAccount(AccountVerificationRequest accountVerificationRequest) throws IOException;
     List<BankName> getListOfBanks() throws IOException;
-    String bvnValidation(BvnValidationRequest bvnValidationRequest) throws IOException;
+    JsonNode bvnValidation(BvnValidationRequest bvnValidationRequest) throws IOException;
     String getBankCode(BankCodeRequest bankCodeRequest) throws IOException;
     String createTransferRecipient(CreateTransferRecipientRequest createTransferRecipientRequest) throws IOException;
     JsonNode initiateTransfer(InitiateTransferRequest initiateTransferRequest) throws IOException;
