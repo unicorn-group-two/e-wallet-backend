@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public BVNValidationPaystackResponse bvnValidation(BvnValidationRequest bvnValidationRequest) throws IOException {
+    public JsonNode bvnValidation(BvnValidationRequest bvnValidationRequest) throws IOException {
 
             OkHttpClient client = new OkHttpClient();
             MediaType mediaType = MediaType.parse("application/json");
@@ -160,9 +160,14 @@ public class UserServiceImpl implements UserService{
                 .addHeader("Content-Type", "application/json")
                 .build();
         try (ResponseBody response = client.newCall(request).execute().body()){
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    .readValue(response.string(), BVNValidationPaystackResponse.class);
+            JsonFactory jsonFactory = new JsonFactory();
+            ObjectMapper objectMapper = new ObjectMapper(jsonFactory);
+            return objectMapper.readTree(response.string());
+
+//            BVNValidationPaystackResponse bvnValidationPaystackResponse
+//            = objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+//                    .readValue(response.string(), BVNValidationPaystackResponse.class);
+//            return bvnValidationPaystackResponse.getData().getAccount_number();
 
         }
 
@@ -270,6 +275,8 @@ public class UserServiceImpl implements UserService{
         foundUser.getCardList().add(addedCard);
         foundUser.setKyc(addedKyc);
         foundUser.setNextOfKin(addedNextOfKin);
+        if (Objects.equals(bvnValidation(updateUserInfoRequest.getBvnValidationRequest()), "false") ||
+        bvnValidation(updateUserInfoRequest.getBvnValidationRequest()) == null)throw new GenericHandlerException("BVN is invalid");
         userRepo.save(foundUser);
         return "user information updated successfully!";
     }
