@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.ZonedDateTime;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("api/v1/forgot-password")
 public class ForgotPasswordController {
     @Autowired
@@ -49,7 +50,7 @@ public class ForgotPasswordController {
     }
     @PutMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest,
-                                            HttpServletRequest httpServletRequest){
+                                            HttpServletRequest httpServletRequest) throws Exception {
         String response = resetPasswordService.resetPassword(resetPasswordRequest);
         ApiResponse apiResponse = ApiResponse.builder()
                 .timeStamp(ZonedDateTime.now())

@@ -1,6 +1,7 @@
 package com.africa.semicolon.ewallet.data.models;
 
 import com.africa.semicolon.ewallet.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -9,6 +10,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @RequiredArgsConstructor
@@ -34,6 +39,20 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
     private Boolean isDisabled = true;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_Id", referencedColumnName = "id")
+    private List<Card> cardList ;
+    @OneToOne
+    @JoinColumn(name = "nextOfKin_Id", referencedColumnName = "id")
+    private NextOfKin nextOfKin;
+    @OneToOne
+    @JoinColumn(name = "kyc_id", referencedColumnName = "id")
+    private KYC kyc;
+    private String balance = "0.98";
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VerificationOTP> verificationOTPs = new ArrayList<>();
+
 
     public User(String firstName, String lastName, String emailAddress,  String password, Role role) {
         this.firstName = firstName;

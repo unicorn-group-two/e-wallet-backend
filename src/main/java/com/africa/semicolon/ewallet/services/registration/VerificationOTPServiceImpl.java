@@ -1,4 +1,4 @@
-package com.africa.semicolon.ewallet.services.registration.otp;
+package com.africa.semicolon.ewallet.services.registration;
 
 import com.africa.semicolon.ewallet.data.models.VerificationOTP;
 import com.africa.semicolon.ewallet.data.repositories.VerificationOTPRepo;
@@ -26,5 +26,11 @@ public class VerificationOTPServiceImpl implements VerificationOTPService {
     @Override
     public void setVerifiedAt(String otp) {
         verificationOTPRepo.setVerifiedAt(LocalDateTime.now(), otp);
+    }
+
+    @Override
+    public void deleteOtp() {
+        verificationOTPRepo.deleteVerificationOTPByExpiredAtBefore(LocalDateTime.now());
+
     }
 }

@@ -1,4 +1,4 @@
-package com.africa.semicolon.ewallet.services.registration.otp;
+package com.africa.semicolon.ewallet.services.registration;
 
 import com.africa.semicolon.ewallet.data.models.VerificationOTP;
 
@@ -10,4 +10,6 @@ public interface VerificationOTPService {
     Optional<VerificationOTP> findByOTP(String otp);
 
     void setVerifiedAt(String otp);
+
+    void deleteOtp();
 }

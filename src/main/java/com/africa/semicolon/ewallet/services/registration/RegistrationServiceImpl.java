@@ -1,7 +1,8 @@
-package com.africa.semicolon.ewallet.services.registration.otp;
+package com.africa.semicolon.ewallet.services.registration;
 
 import com.africa.semicolon.ewallet.data.models.User;
 import com.africa.semicolon.ewallet.data.models.VerificationOTP;
+import com.africa.semicolon.ewallet.data.repositories.UserRepo;
 import com.africa.semicolon.ewallet.dtos.request.RegistrationRequest;
 import com.africa.semicolon.ewallet.dtos.request.SendOTPRequest;
 import com.africa.semicolon.ewallet.dtos.request.VerifyOTPRequest;
@@ -9,6 +10,7 @@ import com.africa.semicolon.ewallet.enums.Role;
 import com.africa.semicolon.ewallet.exceptions.GenericHandlerException;
 import com.africa.semicolon.ewallet.services.email.EmailSender;
 import com.africa.semicolon.ewallet.services.user.UserService;
+import com.africa.semicolon.ewallet.utils.OTPGenerator;
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +28,14 @@ public class RegistrationServiceImpl implements RegistrationService{
     private PasswordEncoder passwordEncoder;
 
     @Autowired
+    private UserRepo userRepo;
+    @Autowired
     private VerificationOTPService verificationOTPService;
 
     @Autowired
     private EmailSender emailSender;
     @Override
-    public String register(RegistrationRequest registrationRequest) throws MessagingException {
+    public String register(RegistrationRequest registrationRequest) throws Exception {
         boolean isExist = userService.findUserByEmailAddress(registrationRequest.getEmailAddress())
                 .isPresent();
         if (isExist)throw new GenericHandlerException("User with email already exist");
@@ -66,8 +70,22 @@ public class RegistrationServiceImpl implements RegistrationService{
     }
 
     @Override
-    public String resendVerificationOTP(SendOTPRequest sendOTPRequest) {
-        return null;
+    public String resendVerificationOTP(SendOTPRequest sendOTPRequest) throws MessagingException {
+       var foundUser= userRepo.findUserByEmailAddressIgnoreCase(sendOTPRequest.getEmailAddress())
+                .orElseThrow(()->
+                        new GenericHandlerException("User with this" + sendOTPRequest.getEmailAddress() +"does not exist"));
+       if (!foundUser.getIsDisabled()) throw new GenericHandlerException("You are already a verified user");
+       String oTP = OTPGenerator.generateOTP().toString();
+        VerificationOTP verificationOTP = new VerificationOTP(
+                oTP,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(10),
+                foundUser
+        );
+        verificationOTPService.saveVerificationOTP(verificationOTP);
+        emailSender.send(sendOTPRequest.getEmailAddress(), buildEmail(foundUser.getFirstName(), oTP));
+
+        return oTP;
     }
 
     private String buildEmail(String name, String link) {
