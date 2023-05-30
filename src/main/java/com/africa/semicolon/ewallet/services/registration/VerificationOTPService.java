@@ -1,4 +1,4 @@
-package com.africa.semicolon.ewallet.services.registration.otp;
+package com.africa.semicolon.ewallet.services.registration;
 
 import com.africa.semicolon.ewallet.data.models.VerificationOTP;
 

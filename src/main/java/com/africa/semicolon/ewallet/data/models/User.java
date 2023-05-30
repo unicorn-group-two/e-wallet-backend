@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -46,6 +48,10 @@ public class User {
     @OneToOne
     @JoinColumn(name = "kyc_id", referencedColumnName = "id")
     private KYC kyc;
+    private String balance = "0.98";
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VerificationOTP> verificationOTPs = new ArrayList<>();
 
 
     public User(String firstName, String lastName, String emailAddress,  String password, Role role) {

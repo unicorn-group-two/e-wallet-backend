@@ -1,4 +1,4 @@
-package com.africa.semicolon.ewallet.services.registration.otp;
+package com.africa.semicolon.ewallet.services.registration;
 
 import com.africa.semicolon.ewallet.data.models.User;
 import com.africa.semicolon.ewallet.data.models.VerificationOTP;
@@ -35,7 +35,7 @@ public class RegistrationServiceImpl implements RegistrationService{
     @Autowired
     private EmailSender emailSender;
     @Override
-    public String register(RegistrationRequest registrationRequest) throws MessagingException {
+    public String register(RegistrationRequest registrationRequest) throws Exception {
         boolean isExist = userService.findUserByEmailAddress(registrationRequest.getEmailAddress())
                 .isPresent();
         if (isExist)throw new GenericHandlerException("User with email already exist");

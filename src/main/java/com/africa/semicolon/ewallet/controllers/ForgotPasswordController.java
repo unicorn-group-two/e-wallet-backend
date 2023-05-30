@@ -50,7 +50,7 @@ public class ForgotPasswordController {
     }
     @PutMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest,
-                                            HttpServletRequest httpServletRequest){
+                                            HttpServletRequest httpServletRequest) throws Exception {
         String response = resetPasswordService.resetPassword(resetPasswordRequest);
         ApiResponse apiResponse = ApiResponse.builder()
                 .timeStamp(ZonedDateTime.now())

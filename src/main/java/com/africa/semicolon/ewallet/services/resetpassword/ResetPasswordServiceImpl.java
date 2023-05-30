@@ -7,8 +7,8 @@ import com.africa.semicolon.ewallet.dtos.request.SendOTPRequest;
 import com.africa.semicolon.ewallet.dtos.request.VerifyOTPRequest;
 import com.africa.semicolon.ewallet.exceptions.GenericHandlerException;
 import com.africa.semicolon.ewallet.services.email.EmailSender;
-import com.africa.semicolon.ewallet.services.registration.otp.RegistrationService;
-import com.africa.semicolon.ewallet.services.registration.otp.VerificationOTPService;
+import com.africa.semicolon.ewallet.services.registration.RegistrationService;
+import com.africa.semicolon.ewallet.services.registration.VerificationOTPService;
 import com.africa.semicolon.ewallet.services.user.UserService;
 import com.africa.semicolon.ewallet.utils.OTPGenerator;
 import jakarta.mail.MessagingException;
@@ -66,7 +66,7 @@ public class ResetPasswordServiceImpl implements ResetPasswordService{
     }
 
     @Override
-    public String resetPassword(ResetPasswordRequest resetPasswordRequest) {
+    public String resetPassword(ResetPasswordRequest resetPasswordRequest) throws Exception {
         User foundUser = userService.findUserByEmailAddress(resetPasswordRequest.getEmailAddress()).get();
         if (!Objects.equals(resetPasswordRequest.getPassword(), resetPasswordRequest.getConfirmPassword()))throw new GenericHandlerException(
                 "Password doesn't match"

@@ -3,7 +3,6 @@ package com.africa.semicolon.ewallet.controllers;
 import com.africa.semicolon.ewallet.data.models.Card;
 import com.africa.semicolon.ewallet.dtos.request.*;
 import com.africa.semicolon.ewallet.dtos.response.accountverificationpaystackresponse.AccountVerificationPaystackResponse;
-import com.africa.semicolon.ewallet.dtos.response.bankcoderesponse.Bank;
 import com.africa.semicolon.ewallet.dtos.response.bvnvalidationpaystackresponse.BVNValidationPaystackResponse;
 import com.africa.semicolon.ewallet.services.user.UserService;
 import com.africa.semicolon.ewallet.utils.ApiResponse;
@@ -15,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity<?>changePassword(@RequestBody ChangePasswordRequest changePasswordRequest, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<?>changePassword(@RequestBody ChangePasswordRequest changePasswordRequest, HttpServletRequest httpServletRequest) throws Exception {
         String changePasswordResponse = userService.changePassword(changePasswordRequest);
         ApiResponse apiResponse = ApiResponse.builder()
                 .timeStamp(ZonedDateTime.now())
@@ -70,7 +70,7 @@ public class UserController {
 
     }
     @PutMapping("/addCard/{userId}")
-    public ResponseEntity<?>addCards(@PathVariable("userId") Long userId, @RequestBody AddCardRequest addCardRequest, HttpServletRequest httpServletRequest) throws ParseException, IOException {
+    public ResponseEntity<?>addCards(@PathVariable("userId") Long userId, @RequestBody AddCardRequest addCardRequest, HttpServletRequest httpServletRequest) throws Exception {
         String putCard = userService.addCard(userId, addCardRequest);
         ApiResponse apiResponse = ApiResponse.builder()
                 .timeStamp(ZonedDateTime.now())
@@ -82,7 +82,7 @@ public class UserController {
         return new ResponseEntity<>(apiResponse, HttpStatus.ACCEPTED);
     }
     @GetMapping("/verify-account")
-    public ResponseEntity<?>verifyReceiversAccount(@RequestBody AccountVerificationRequest accountVerificationRequest, HttpServletRequest httpServletRequest) throws IOException {
+    public ResponseEntity<?> verifyReceiversAccount(@RequestBody AccountVerificationRequest accountVerificationRequest, HttpServletRequest httpServletRequest) throws IOException {
         AccountVerificationPaystackResponse verificationResponse = userService.verifyReceiverAccount(accountVerificationRequest);
         ApiResponse apiResponse = ApiResponse.builder()
                 .timeStamp(ZonedDateTime.now())
@@ -158,8 +158,8 @@ public class UserController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
     @DeleteMapping("/delete-user/{userId}")
-    public ResponseEntity<?> deleteUser(@PathVariable("userId")Long userId, @RequestBody DeleteUserRequest deleteUserRequest, HttpServletRequest httpServletRequest){
-        Object response = userService.deleteUser(userId,deleteUserRequest);
+    public ResponseEntity<?> deleteUser(@PathVariable("userId")Long userId, @RequestBody DeleteUserRequest deleteUserRequest, HttpServletRequest httpServletRequest) throws Exception {
+        var response = userService.deleteUser(userId,deleteUserRequest);
         ApiResponse apiResponse = ApiResponse.builder()
                 .timeStamp(ZonedDateTime.now())
                 .data(response)
@@ -178,6 +178,20 @@ public class UserController {
         ApiResponse apiResponse = ApiResponse.builder()
                 .timeStamp(ZonedDateTime.now())
                 .data(userInformation)
+                .path(httpServletRequest.getRequestURI())
+                .statusCode(HttpStatus.OK.value())
+                .isSuccessful(true)
+                .build();
+        return new ResponseEntity<>(apiResponse, HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/get-balance/{userId}")
+    public ResponseEntity<?>getBalance(@PathVariable("userId") Long userId,
+                                                  HttpServletRequest httpServletRequest) throws Exception {
+        BigDecimal userBalance  =  userService.getUserBalance(userId);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .timeStamp(ZonedDateTime.now())
+                .data(userBalance)
                 .path(httpServletRequest.getRequestURI())
                 .statusCode(HttpStatus.OK.value())
                 .isSuccessful(true)

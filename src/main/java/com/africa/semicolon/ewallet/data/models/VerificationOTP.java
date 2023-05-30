@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -21,6 +23,7 @@ public class VerificationOTP {
     private LocalDateTime verifiedAt;
     @ManyToOne
     @JoinColumn(name = "User_id", referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     public VerificationOTP(String oneTimePassword, LocalDateTime createdAt, LocalDateTime expiredAt, User user) {

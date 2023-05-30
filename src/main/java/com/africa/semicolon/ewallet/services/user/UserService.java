@@ -10,22 +10,23 @@ import com.africa.semicolon.ewallet.dtos.response.getbankspaystackresponse.BankN
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    String createAccount(User user);
+    String createAccount(User user) throws Exception;
 
     String login(LoginRequest loginRequest);
     Optional<User>findUserByEmailAddress(String EmailAddress);
 
-    String changePassword(ChangePasswordRequest changePasswordRequest);
+    String changePassword(ChangePasswordRequest changePasswordRequest) throws Exception;
     void enableUser(String emailAddress);
-    void saveUser(User user);
+    void saveUser(User user) throws Exception;
 
     List<Card> viewCards(Long userId);
-    String addCard(Long userId, AddCardRequest addCardRequest) throws ParseException, IOException;
+    String addCard(Long userId, AddCardRequest addCardRequest) throws Exception;
     AccountVerificationPaystackResponse verifyReceiverAccount(AccountVerificationRequest accountVerificationRequest) throws IOException;
     List<BankName> getListOfBanks() throws IOException;
     BVNValidationPaystackResponse bvnValidation(BvnValidationRequest bvnValidationRequest) throws IOException;
@@ -34,8 +35,10 @@ public interface UserService {
     JsonNode initiateTransfer(InitiateTransferRequest initiateTransferRequest) throws IOException;
     String UpdateUserInfo(Long userId, UpdateUserInfoRequest updateUserInfoRequest) throws ParseException, IOException;
 
-    String deleteUser(Long userId, DeleteUserRequest deleteUserRequest);
+    String deleteUser(Long userId, DeleteUserRequest deleteUserRequest) throws Exception;
 
     User findUserById(Long userId);
+
+    BigDecimal getUserBalance(Long userId) throws Exception;
 
 }

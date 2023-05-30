@@ -19,7 +19,8 @@ import com.africa.semicolon.ewallet.exceptions.GenericHandlerException;
 import com.africa.semicolon.ewallet.services.cardservices.CardService;
 import com.africa.semicolon.ewallet.services.kycservices.KYCService;
 import com.africa.semicolon.ewallet.services.nextofkinservices.NextOfKinService;
-import com.africa.semicolon.ewallet.services.registration.otp.VerificationOTPService;
+import com.africa.semicolon.ewallet.services.registration.VerificationOTPService;
+import com.africa.semicolon.ewallet.utils.Encryptor;
 import com.africa.semicolon.ewallet.utils.OTPGenerator;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -34,12 +35,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -52,13 +51,14 @@ public class UserServiceImpl implements UserService{
     private VerificationOTPService verificationOTPService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Autowired
     private KYCService kycService;
     @Autowired
     private NextOfKinService nextOfKinService;
     private final String SECRET_KEY = System.getenv("PAYSTACK_SECRET_KEY");
     @Override
-    public String createAccount(User user) {
+    public String createAccount(User user) throws Exception {
         saveUser(user);
         String oTP = OTPGenerator.generateOTP().toString();
         VerificationOTP verificationOTP = new VerificationOTP(
@@ -71,7 +71,8 @@ public class UserServiceImpl implements UserService{
         return oTP;
     }
 
-    public void saveUser(User user) {
+    public void saveUser(User user) throws Exception {
+        user.setBalance(Encryptor.encrypt(user.getBalance()));
         userRepo.save(user);
     }
 
@@ -81,7 +82,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public String addCard(Long userId, AddCardRequest addCardRequest) throws ParseException, IOException {
+    public String addCard(Long userId, AddCardRequest addCardRequest) throws Exception {
         User foundUser = userRepo.findById(userId).get();
         Card newCard = cardService.addCard(addCardRequest);
         foundUser.getCardList().add(newCard);
@@ -274,7 +275,7 @@ public class UserServiceImpl implements UserService{
         return "user information updated successfully!";
     }
     @Override
-    public String deleteUser(Long userId, DeleteUserRequest deleteUserRequest) {
+    public String deleteUser(Long userId, DeleteUserRequest deleteUserRequest) throws Exception {
         User foundUser = userRepo.findById(userId).get();
         if (passwordEncoder.matches(deleteUserRequest.getPassword(), foundUser.getPassword())){
             foundUser.setEmailAddress("deleted"+foundUser.getEmailAddress()+UUID.randomUUID());
@@ -288,6 +289,12 @@ public class UserServiceImpl implements UserService{
     @Override
     public User findUserById(Long userId) {
         return userRepo.findById(userId).orElseThrow(()-> new GenericHandlerException("user doesnt exist"));
+    }
+
+    @Override
+    public BigDecimal getUserBalance(Long userId) throws Exception {
+        User foundUser = findUserById(userId);
+        return new BigDecimal(Encryptor.decrypt(foundUser.getBalance()));
     }
 
 
@@ -306,7 +313,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public String changePassword(ChangePasswordRequest changePasswordRequest) {
+    public String changePassword(ChangePasswordRequest changePasswordRequest) throws Exception {
         User findUser = userRepo.findUserByEmailAddressIgnoreCase(changePasswordRequest.getEmailAddress()).get();
         if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), findUser.getPassword())) throw new GenericHandlerException("Incorrect Password!");
         if (!Objects.equals(changePasswordRequest.getNewPassword(), changePasswordRequest.getConfirmNewPassword())) throw new GenericHandlerException("Password Not Match!");
