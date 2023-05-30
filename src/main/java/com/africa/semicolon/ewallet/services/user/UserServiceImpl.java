@@ -8,7 +8,6 @@ import com.africa.semicolon.ewallet.dtos.request.*;
 import com.africa.semicolon.ewallet.dtos.response.accountverificationpaystackresponse.AccountVerificationPaystackResponse;
 import com.africa.semicolon.ewallet.dtos.response.bankcoderesponse.Bank;
 import com.africa.semicolon.ewallet.dtos.response.bankcoderesponse.BankCodePaystackResponse;
-import com.africa.semicolon.ewallet.dtos.response.bvnvalidationpaystackresponse.BVNValidationPaystackResponse;
 import com.africa.semicolon.ewallet.dtos.response.createtransferrecipientpaystackresponse.CreateTransferRecipientPaystackResponse;
 import com.africa.semicolon.ewallet.dtos.response.getbankspaystackresponse.BankName;
 import com.africa.semicolon.ewallet.dtos.response.getbankspaystackresponse.GetBanksPaystackResponse;
