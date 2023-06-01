@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.ZonedDateTime;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "https://synonymous-profit-pipeops-04b4d2eb.pipeops.app/")
 @Slf4j
 @RequestMapping("/api/v1/registration")
 public class RegistrationController {
